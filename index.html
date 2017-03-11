@@ -60,9 +60,18 @@
         <div class="container">
             <p v-if="midi.error" class="text-danger">{{ midi.error }}</p>
             <div v-if="midi.access" class="row">
-                <div class="col-xs-1">
-                    <select>
-                        <option v-for="port in Array.from(midi.access.inputs.values())">
+                <div class="col-sm-2">
+                    <select v-model="midi.input">
+                        <option value="null">None</option>
+                        <option v-for="port in Array.from(midi.access.inputs.values())" :value="port">
+                            {{ port.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select v-model="midi.output">
+                        <option value="null">None</option>
+                        <option v-for="port in Array.from(midi.access.outputs.values())" :value="port">
                             {{ port.name }}
                         </option>
                     </select>
