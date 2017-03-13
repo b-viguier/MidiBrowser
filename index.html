@@ -37,9 +37,8 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a>Stop</a></li>
-                    <li><a>Play</a></li>
-                    <li><a>Record</a></li>
+                    <li><button type="button" class="btn" :class="[isRecording ? 'btn-success' : 'btn-default']" v-on:click="onPlayClicked">Play</button></li>
+                    <li><button type="button" class="btn" :class="[isRecording ? 'btn-danger' : 'btn-default']" v-on:click="onRecordClicked">Record</button></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a>Bpm</a></li>
