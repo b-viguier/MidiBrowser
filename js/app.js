@@ -4,7 +4,8 @@
             error: null,
             access: null,
             input: null,
-            output: null
+            output: null,
+            thru: false
         },
         recorder: {
             buffer: null
@@ -58,8 +59,11 @@
                         this.$data.player.trackDuration = performance.now() - this.$data.player.startTime;
                     }
                 } else if (this.isValidInput) {
-                    // TODO: Only if all is empty
-                    this.$data.midi.input.onmidimessage = pendingRecordCallback;
+                    if (!this.isPlaying) {
+                        this.$data.midi.input.onmidimessage = pendingRecordCallback;
+                    } else {
+                        this.$data.midi.input.onmidimessage = recordCallback;
+                    }
                     this.$data.recorder.buffer = [];
 
                     this.$data.player.tracks.push({
@@ -73,9 +77,10 @@
                     this.$data.player.startTime = null;
                     clearInterval(this.$data.player.intervalId);
                     this.$data.player.intervalId = null;
+                    //TODO: send all note off
                 } else if (this.isValidOutput) {
                     this.$data.player.intervalId = setInterval(playCallback, this.$data.player.timeAccuracy);
-                    this.$data.player.startTime = now || performance.now();
+                    playInit(now || performance.now())
                 }
             }
         },
@@ -119,6 +124,10 @@
             data: event.data,
             timeStamp: event.timeStamp - app.$data.player.startTime
         });
+
+        if (app.$data.midi.thru) {
+            app.$data.midi.output.send(event.data);
+        }
     }
 
     function playCallback() {
@@ -126,16 +135,20 @@
         playTracks(timeLimit);
         // Loop
         if (timeLimit > app.$data.player.trackDuration) {
-            app.$data.player.startTime += app.$data.player.trackDuration;
-            for (var i = 0; i < app.$data.player.tracks.length; ++i) {
-                app.$data.player.tracks[i].index = 0;
-            }
+            playInit(app.$data.player.startTime + app.$data.player.trackDuration)
             playTracks(timeLimit - app.$data.player.trackDuration);
 
             // If non empty record buffer, merge it
-            if(app.isRecording && app.$data.recorder.buffer.length) {
+            if (app.isRecording && app.$data.recorder.buffer.length) {
                 flushRecordBuffer();
             }
+        }
+    }
+
+    function playInit(now) {
+        app.$data.player.startTime = now;
+        for (var i = 0; i < app.$data.player.tracks.length; ++i) {
+            app.$data.player.tracks[i].index = 0;
         }
     }
 
@@ -155,7 +168,7 @@
         app.$data.player.tracks[app.$data.player.tracks.length - 1] =
             mergeTracks(
                 app.$data.player.tracks[app.$data.player.tracks.length - 1],
-                app.$data.recorder.buffer.map(function(event) {
+                app.$data.recorder.buffer.map(function (event) {
                     event.timeStamp = event.timeStamp % app.$data.player.trackDuration;
                     return event;
                 })

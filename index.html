@@ -37,7 +37,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><button type="button" class="btn" :class="[isPlaying ? 'btn-success' : 'btn-default']" v-on:click="onPlayClicked">Play</button></li>
+                    <li><button type="button" class="btn" :class="[isPlaying ? 'btn-success' : 'btn-default']" v-on:click="onPlayClicked(0)">Play</button></li>
                     <li><button type="button" class="btn" :class="[isRecording ? 'btn-danger' : 'btn-default']" v-on:click="onRecordClicked">Record</button></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -74,6 +74,9 @@
                             {{ port.name }}
                         </option>
                     </select>
+                </div>
+                <div class="col-sm-2">
+                    Midi Thru<input type="checkbox" v-model="midi.thru">
                 </div>
             </div>
         </div>
