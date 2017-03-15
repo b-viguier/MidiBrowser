@@ -7,8 +7,7 @@
             error: null,
             access: null,
             input: null,
-            output: null,
-            thru: false
+            output: null
         },
         recorder: {
             buffer: null
@@ -83,6 +82,13 @@
                     this.$data.player.intervalId = setInterval(playCallback, this.$data.player.timeAccuracy);
                     playInit(now || performance.now())
                 }
+            },
+            onThruClicked: function(isEnabled) {
+                if(isEnabled) {
+                    inputDispatcher.push(midiThruCallback);
+                } else {
+                    inputDispatcher.remove(midiThruCallback);
+                }
             }
         },
         computed: {
@@ -124,10 +130,10 @@
             data: event.data,
             timeStamp: event.timeStamp - app.$data.player.startTime
         });
-
-        if (app.$data.midi.thru) {
-            app.$data.midi.output.send(event.data);
-        }
+    }
+    
+    function midiThruCallback(event) {
+        app.$data.midi.output.send(event.data);
     }
 
     function playCallback() {

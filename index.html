@@ -76,7 +76,7 @@
                     </select>
                 </div>
                 <div class="col-sm-2">
-                    Midi Thru<input type="checkbox" v-model="midi.thru">
+                    Midi Thru<input type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
                 </div>
             </div>
         </div>
