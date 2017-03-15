@@ -1,4 +1,7 @@
 (function () {
+
+    var inputDispatcher = new Dispatcher();
+
     var data = {
         midi: {
             error: null,
@@ -38,21 +41,19 @@
         },
         watch: {
             "midi.input": function (newInput, oldInput) {
-                var currentCallback = null;
+
                 if (oldInput) {
-                    currentCallback = oldInput.onmidimessage;
                     oldInput.onmidimessage = null;
                 }
-                if (newInput && currentCallback) {
-                    newInput.onmidimessage = currentCallback;
-                }
+                newInput.onmidimessage = inputDispatcher.getCallback();
             }
         },
         methods: {
             onRecordClicked: function () {
                 if (this.isRecording) {
                     flushRecordBuffer();
-                    this.$data.midi.input.onmidimessage = null;
+                    inputDispatcher.remove(recordCallback);
+                    inputDispatcher.remove(pendingRecordCallback);
                     this.$data.recorder.buffer = null;
                     // When stopping record for first time, init a play session
                     if (this.$data.player.trackDuration === 999999999) {
@@ -60,10 +61,10 @@
                     }
                 } else if (this.isValidInput) {
                     if (!this.isPlaying) {
-                        this.$data.midi.input.onmidimessage = pendingRecordCallback;
-                    } else {
-                        this.$data.midi.input.onmidimessage = recordCallback;
+                        inputDispatcher.push(pendingRecordCallback);
                     }
+                    inputDispatcher.push(recordCallback);
+
                     this.$data.recorder.buffer = [];
 
                     this.$data.player.tracks.push({
@@ -113,8 +114,7 @@
         if (discardMidiEvent(event)) return;
 
         app.onPlayClicked(event.timeStamp);
-        app.$data.midi.input.onmidimessage = recordCallback;
-        recordCallback(event);
+        inputDispatcher.remove(pendingRecordCallback);
     }
 
     function recordCallback(event) {
