@@ -29,7 +29,7 @@ class Recorder {
 
     getInputCallback() {
         return this.callback || (this.callback = (function (event) {
-                if (this.ignoreMidiEvent(event)) {
+                if (Recorder.isIgnored(event)) {
                     return;
                 }
                 this.track.push({
@@ -39,18 +39,12 @@ class Recorder {
             }).bind(this));
     }
 
-    ignoreMidiEvent(event) {
+    static isIgnored(event) {
         switch (event.data[0] & 0xf0) {
             case 0x90:  // Note On
             case 0x80:  // Note Off
                 return false;
         }
         return true;
-    }
-
-    flushTrack() {
-        var track = this.track;
-        this.track = new Track();
-        return track;
     }
 }
