@@ -48,8 +48,8 @@
         methods: {
             onRecordClicked: function () {
                 this.$data.recorder.toggle();
-                if (this.isRecording) {
-                    if (!this.isPlaying) {
+                if (this.$data.recorder.isEnabled()) {
+                    if (!this.$data.player.isEnabled()) {
                         inputDispatcher.push(delayedPlayCallback);
                     }
                     this.$data.player.setInputTrack(this.$data.recorder.track);
@@ -60,7 +60,7 @@
             },
             onPlayClicked: function () {
                 this.$data.player.toggle();
-                if (!this.isPlaying) {
+                if (!this.$data.player.isEnabled()) {
                     this.$data.recorder.disable();
                 }
             },
@@ -78,12 +78,6 @@
             },
             isValidOutput: function () {
                 return this.$data.midi.output instanceof MIDIOutput;
-            },
-            isRecording: function () {
-                return this.$data.recorder.isEnabled();
-            },
-            isPlaying: function () {
-                return this.$data.player.isEnabled();
             }
         }
     });
