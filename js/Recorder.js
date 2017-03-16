@@ -16,18 +16,18 @@ class Recorder {
 
     enable() {
         this.track.clear();
-        this.input.push(this.inputCallback());
+        this.input.push(this.getInputCallback());
         this.enabled = true;
         return true;
     }
 
     disable() {
-        this.input.remove(this.inputCallback());
+        this.input.remove(this.getInputCallback());
         this.enabled = false;
         return true;
     }
 
-    inputCallback() {
+    getInputCallback() {
         return this.callback || (this.callback = (function (event) {
                 if (this.ignoreMidiEvent(event)) {
                     return;
