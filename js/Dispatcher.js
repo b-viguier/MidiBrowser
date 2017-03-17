@@ -9,24 +9,35 @@ class Dispatcher {
     }
 
     call(...args) {
-        this.callbacks.forEach(function (f) {
-            f(...args);
-        });
+        this.entries.forEach(
+            e => e.callback(...args)
+        );
     }
 
-    push(callback) {
-        if (-1 === this.callbacks.indexOf(callback)) {
-            this.callbacks.push(callback);
+    push(callback, priority) {
+        var entry = {
+            callback: callback,
+            priority: priority || 0
+        };
+        if (-1 === this.entries.indexOf(entry)) {
+            this.entries.push(entry);
+            this.sort();
         }
     }
 
     remove(callback) {
-        this.callbacks = this.callbacks.filter(function (f) {
-            return f !== callback;
-        })
+        this.entries = this.entries.filter(
+            e => e.callback !== callback
+        )
     }
 
     clear() {
-        this.callbacks = [];
+        this.entries = [];
+    }
+
+    sort() {
+        this.entries.sort(
+            (a, b) => a.priority === b.priority ? 0 : (a.priority < b.priority ? 1 : -1)
+        );
     }
 }

@@ -78,6 +78,13 @@
                 <div class="col-sm-2">
                     Midi Thru<input type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
                 </div>
+                <div class="col-sm-2">
+                    <p>Channel mapping</p>
+                    <select v-model="midi.channelMap">
+                        <option value="-1">None</option>
+                        <option v-for="chan in 16" :value="chan-1">{{ chan }}</option>
+                    </select>
+                </div>
             </div>
         </div>
     </footer>

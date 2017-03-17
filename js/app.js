@@ -7,7 +7,8 @@
             error: null,
             access: null,
             input: null,
-            output: null
+            output: null,
+            channelMap: -1
         },
         recorder: new Recorder(inputDispatcher),
         player: new Player(10, function(event, time) {})
@@ -42,6 +43,13 @@
                     this.$data.player.output = newOutput.send.bind(newOutput);
                 } else {
                     this.$data.player.output = function(event, timestam) {};
+                }
+            },
+            "midi.channelMap": function (newChan) {
+                if (newChan >= 0) {
+                    inputDispatcher.push(channelMapCallback, 1000);
+                } else {
+                    inputDispatcher.remove(channelMapCallback);
                 }
             }
         },
@@ -91,6 +99,13 @@
 
     function midiThruCallback(event) {
         app.$data.midi.output.send(event.data);
+    }
+
+    function channelMapCallback(event) {
+        if(Recorder.isIgnored(event)) return;
+
+        event.data[0] &= 0xf0;
+        event.data[0] |= app.$data.midi.channelMap;
     }
 
 })();
