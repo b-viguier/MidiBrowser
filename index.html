@@ -37,11 +37,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><button type="button" class="btn" :class="[player.isEnabled() ? 'btn-success' : 'btn-default']" v-on:click="onPlayClicked">Play</button></li>
-                    <li><button type="button" class="btn" :class="[recorder.isEnabled() ? 'btn-danger' : 'btn-default']" v-on:click="onRecordClicked">Record</button></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a>Bpm</a></li>
+
                 </ul>
             </div>
         </div>
@@ -51,41 +47,58 @@
     <div class="container-fluid">
 
         <div class="jumbotron">
+            <h1 v-if="midi.error" class="text-danger">{{ midi.error }}</h1>
+            <div v-if="midi.access" class="row form-inline text-center">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="midi_input">Input</label>
+                        <select id="midi_input" v-model="midi.input" class="form-control">
+                            <option value="null">None</option>
+                            <option v-for="port in Array.from(midi.access.inputs.values())" :value="port">
+                                {{ port.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="midi_output">Output</label>
+                        <select v-model="midi.output" class="form-control">
+                            <option id="midi_output" value="null">None</option>
+                            <option v-for="port in Array.from(midi.access.outputs.values())" :value="port">
+                                {{ port.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="midi_thru">Midi Thru</label>
+                        <input id="midi_thru" type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
+                    </div>
+                    <div class="form-group">
+                        <label for="midi_map">Channel mapping</label>
+                        <select id="midi_map" v-model="midi.channelMap" class="form-control">
+                            <option value="-1">None</option>
+                            <option v-for="chan in 16" :value="chan-1">{{ chan }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="btn-group btn-group-lg" role="group" aria-label="...">
+                        <button type="button" class="btn" :class="[player.isEnabled() ? 'btn-success' : 'btn-default']"
+                                v-on:click="onPlayClicked">Play
+                        </button>
+                        <button type="button" class="btn" :class="[recorder.isEnabled() ? 'btn-danger' : 'btn-default']"
+                                v-on:click="onRecordClicked">Record
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
 
     <footer class="footer">
         <div class="container">
-            <p v-if="midi.error" class="text-danger">{{ midi.error }}</p>
-            <div v-if="midi.access" class="row">
-                <div class="col-sm-2">
-                    <select v-model="midi.input">
-                        <option value="null">None</option>
-                        <option v-for="port in Array.from(midi.access.inputs.values())" :value="port">
-                            {{ port.name }}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-sm-2">
-                    <select v-model="midi.output">
-                        <option value="null">None</option>
-                        <option v-for="port in Array.from(midi.access.outputs.values())" :value="port">
-                            {{ port.name }}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-sm-2">
-                    Midi Thru<input type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
-                </div>
-                <div class="col-sm-2">
-                    <p>Channel mapping</p>
-                    <select v-model="midi.channelMap">
-                        <option value="-1">None</option>
-                        <option v-for="chan in 16" :value="chan-1">{{ chan }}</option>
-                    </select>
-                </div>
-            </div>
+            <a href="https://github.com/b-viguier/MidiBrowser">Sources</a>
         </div>
     </footer>
 </div>
