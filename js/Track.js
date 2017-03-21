@@ -1,7 +1,8 @@
 class Track {
 
-    constructor() {
+    constructor(name) {
         this.clear();
+        this.name = name || '';
     }
 
     rewind() {

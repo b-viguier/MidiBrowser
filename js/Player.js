@@ -8,6 +8,7 @@ class Player {
         this.inputTrack = null;
         this.startTime = null;
         this.intervalId = null;
+        this.trackNameCounter = 0;
     }
 
     toggle() {
@@ -33,7 +34,7 @@ class Player {
 
     setInputTrack(track) {
         if (track) {
-            this.tracks.push(new Track());
+            this.tracks.push(new Track('Track ' + ++this.trackNameCounter));
         } else if (this.inputTrack) {
             this.flushInputTrack();
             if (this.duration === Number.MAX_SAFE_INTEGER) {
@@ -74,5 +75,9 @@ class Player {
         this.inputTrack.fit(-this.startTime, this.duration);
         this.tracks[this.tracks.length - 1].merge(this.inputTrack);
         this.inputTrack.clear();
+    }
+
+    removeTrack(track) {
+        this.tracks = this.tracks.filter( t => t !== track);
     }
 }
