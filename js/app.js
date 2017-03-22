@@ -98,6 +98,8 @@
     }
 
     function midiThruCallback(event) {
+        if(Recorder.isIgnored(event)) return;
+
         app.$data.midi.output.send(event.data);
     }
 
