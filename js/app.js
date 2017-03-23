@@ -2,6 +2,9 @@
 
     var inputDispatcher = new Dispatcher();
 
+    var doNothingCallback = function () {
+    };
+
     var data = {
         midi: {
             error: null,
@@ -11,7 +14,7 @@
             channelMap: -1
         },
         recorder: new Recorder(inputDispatcher),
-        player: new Player(10, function(event, time) {})
+        player: new Player(10, doNothingCallback)
     };
 
     var app = new Vue({
@@ -42,7 +45,7 @@
                 if (newOutput instanceof MIDIOutput) {
                     this.$data.player.output = newOutput.send.bind(newOutput);
                 } else {
-                    this.$data.player.output = function(event, timestamp) {};
+                    this.$data.player.output = doNothingCallback;
                 }
             },
             "midi.channelMap": function (newChan) {
@@ -80,10 +83,10 @@
                     inputDispatcher.remove(midiThruCallback);
                 }
             },
-            allNotesOff: function() {
-                for(var channel = 0; channel < 16; ++channel) {
+            allNotesOff: function () {
+                for (var channel = 0; channel < 16; ++channel) {
                     this.$data.player.output(
-                        [ 0xB0 + channel, 0x7B, 0x00 ], // All notes off
+                        [0xB0 + channel, 0x7B, 0x00], // All notes off
                         0   // Now
                     );
                 }
@@ -108,13 +111,13 @@
     }
 
     function midiThruCallback(event) {
-        if(Recorder.isIgnored(event)) return;
+        if (Recorder.isIgnored(event)) return;
 
         app.$data.midi.output.send(event.data);
     }
 
     function channelMapCallback(event) {
-        if(Recorder.isIgnored(event)) return;
+        if (Recorder.isIgnored(event)) return;
 
         event.data[0] &= 0xf0;
         event.data[0] |= app.$data.midi.channelMap;
