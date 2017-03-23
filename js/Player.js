@@ -77,6 +77,9 @@ class Player {
     }
 
     removeTrack(track) {
-        this.tracks = this.tracks.filter( t => t !== track);
+        this.tracks = this.tracks.filter(t => t !== track);
+        if (this.tracks.length === 0) {
+            this.duration = Number.MAX_SAFE_INTEGER;
+        }
     }
 }
