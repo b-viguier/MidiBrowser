@@ -42,7 +42,7 @@
                 if (newOutput instanceof MIDIOutput) {
                     this.$data.player.output = newOutput.send.bind(newOutput);
                 } else {
-                    this.$data.player.output = function(event, timestam) {};
+                    this.$data.player.output = function(event, timestamp) {};
                 }
             },
             "midi.channelMap": function (newChan) {
@@ -70,6 +70,7 @@
                 this.$data.player.toggle();
                 if (!this.$data.player.isEnabled()) {
                     this.$data.recorder.disable();
+                    this.allNotesOff();
                 }
             },
             onThruClicked: function (isEnabled) {
@@ -78,6 +79,15 @@
                 } else {
                     inputDispatcher.remove(midiThruCallback);
                 }
+            },
+            allNotesOff: function() {
+                for(var channel = 0; channel < 16; ++channel) {
+                    this.$data.player.output(
+                        [ 0xB0 + channel, 0x7B, 0x00 ], // All notes off
+                        0   // Now
+                    );
+                }
+
             }
         },
         computed: {

@@ -29,7 +29,6 @@ class Player {
         clearInterval(this.intervalId);
         this.startTime = null;
         this.intervalId = null;
-        //TODO: send all note off
     }
 
     setInputTrack(track) {
