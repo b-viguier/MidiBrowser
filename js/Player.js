@@ -1,12 +1,12 @@
 class Player {
 
-    constructor(accuracy, outputCallback) {
+    constructor(clock, accuracy, outputCallback) {
         this.tracks = [];
         this.accuracy = accuracy;
         this.output = outputCallback;
         this.duration = Number.MAX_SAFE_INTEGER;
         this.inputTrack = null;
-        this.startTime = null;
+        this.clock = clock;
         this.intervalId = null;
         this.trackNameCounter = 0;
     }
@@ -21,13 +21,12 @@ class Player {
 
     enable(now) {
         this.intervalId = setInterval(this.playCallback.bind(this), this.accuracy);
-        this.rewind(now || performance.now());
+        this.rewind(now || this.clock.now());
     }
 
     disable() {
-        this.flushInputTrack(); // Implicit ?
+        this.flushInputTrack();
         clearInterval(this.intervalId);
-        this.startTime = null;
         this.intervalId = null;
     }
 
@@ -37,7 +36,7 @@ class Player {
         } else if (this.inputTrack) {
             this.flushInputTrack();
             if (this.duration === Number.MAX_SAFE_INTEGER) {
-                this.duration = performance.now() - this.startTime;
+                this.duration = this.clock.now();
             }
         }
 
@@ -45,25 +44,28 @@ class Player {
     }
 
     rewind(now) {
-        this.startTime = now;
+        this.clock.reset(now);
         this.tracks.forEach(t => t.rewind());
     }
 
     playCallback() {
-        var now = performance.now();
-        var timeLimit = now - this.startTime + this.accuracy;
+        var now = this.clock.now();
+        var timeLimit = now + this.accuracy;
         this.playTracks(timeLimit);
         // Loop
         if (timeLimit > this.duration) {
             this.flushInputTrack();
-            this.rewind(now);
+            this.rewind(this.duration);
             this.playTracks(timeLimit - this.duration);
         }
     }
 
     playTracks(timeLimit) {
         this.tracks.forEach(track =>
-            track.playTo(timeLimit, (event, timestamp) => this.output(event, timestamp + this.startTime))
+            track.playTo(
+                timeLimit,
+                (data, timestamp) => this.output(data, this.clock.toGlobal(timestamp))
+            )
         );
     }
 
@@ -71,7 +73,7 @@ class Player {
         if (!this.inputTrack || this.inputTrack.isEmpty()) {
             return;
         }
-        this.inputTrack.fit(-this.startTime, this.duration);
+        this.inputTrack.loopify(this.duration);
         this.tracks[this.tracks.length - 1].merge(this.inputTrack);
         this.inputTrack.clear();
     }

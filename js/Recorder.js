@@ -1,9 +1,10 @@
 class Recorder {
 
-    constructor(inputDispatcher) {
+    constructor(clock, inputDispatcher) {
         this.track = new Track();
         this.input = inputDispatcher;
         this.enabled = false;
+        this.clock = clock;
     }
 
     toggle() {
@@ -16,7 +17,7 @@ class Recorder {
 
     enable() {
         this.track.clear();
-        this.input.push(this.getInputCallback());
+        this.input.push(this.getInputCallback(), -10);
         this.enabled = true;
         return true;
     }
@@ -34,7 +35,7 @@ class Recorder {
                 }
                 this.track.push({
                     data: event.data,
-                    timeStamp: event.timeStamp
+                    timeStamp: this.clock.toLocal(event.timeStamp)
                 });
             }).bind(this));
     }

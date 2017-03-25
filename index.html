@@ -79,6 +79,10 @@
                             <option v-for="chan in 16" :value="chan-1">{{ chan }}</option>
                         </select>
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="bpm">BPM</span>
+                        <input aria-describedby="bpm" v-model.number="clock.bpm" type="number" min="30" max="300" class="form-control">
+                    </div>
                     <button class="btn btn-default" v-on:click="allNotesOff">All Notes Off</button>
                 </div>
             </div>
@@ -128,6 +132,7 @@
 <script src="./js/WebMIDIAPIShim/WebMIDIAPI.min.js"></script>
 
 <script src="js/Dispatcher.js"></script>
+<script src="js/Clock.js"></script>
 <script src="js/Track.js"></script>
 <script src="js/Player.js"></script>
 <script src="js/Recorder.js"></script>

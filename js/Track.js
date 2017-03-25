@@ -48,10 +48,9 @@ class Track {
         this.isSorted = false;
     }
 
-    fit(offset, duration) {
-        this.events.forEach(function (event) {
-            event.timeStamp = (event.timeStamp + offset) % duration;
-        });
-        this.isSorted = false;
+    loopify(duration) {
+        this.events.forEach(
+            e => e.timeStamp = e.timeStamp % duration
+        );
     }
 }

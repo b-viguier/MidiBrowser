@@ -1,6 +1,7 @@
 (function () {
 
     var inputDispatcher = new Dispatcher();
+    var clock = new Clock();
 
     var doNothingCallback = function () {
     };
@@ -13,8 +14,9 @@
             output: null,
             channelMap: -1
         },
-        recorder: new Recorder(inputDispatcher),
-        player: new Player(10, doNothingCallback)
+        clock: clock,
+        recorder: new Recorder(clock, inputDispatcher),
+        player: new Player(clock, 10, doNothingCallback)
     };
 
     var app = new Vue({
@@ -106,7 +108,7 @@
     function delayedPlayCallback(event) {
         if (Recorder.isIgnored(event)) return;
 
-        app.$data.player.enable(event.timeStamp);
+        app.$data.player.enable(clock.toLocal(event.timeStamp));
         inputDispatcher.remove(delayedPlayCallback);
     }
 
