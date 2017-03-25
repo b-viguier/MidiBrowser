@@ -83,6 +83,12 @@
                         <span class="input-group-addon" id="bpm">BPM</span>
                         <input aria-describedby="bpm" v-model.number="clock.bpm" type="number" min="30" max="300" class="form-control">
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" v-on:click="createMetronomeTrack($refs.nbBeats.value)">Create Metronome Track</button>
+                        </span>
+                        <input ref="nbBeats" type="number" min="1" value="4" class="form-control">
+                    </div>
                     <button class="btn btn-default" v-on:click="allNotesOff">All Notes Off</button>
                 </div>
             </div>

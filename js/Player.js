@@ -32,7 +32,7 @@ class Player {
 
     setInputTrack(track) {
         if (track) {
-            this.tracks.push(new Track('Track ' + ++this.trackNameCounter));
+            this.tracks.push(new Track(track.name || 'Track ' + ++this.trackNameCounter));
         } else if (this.inputTrack) {
             this.flushInputTrack();
             if (this.duration === Number.MAX_SAFE_INTEGER) {

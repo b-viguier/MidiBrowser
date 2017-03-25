@@ -92,7 +92,13 @@
                         0   // Now
                     );
                 }
-
+            },
+            createMetronomeTrack(nbBeats) {
+                var track = new Track("Metronome");
+                var duration = this.$data.clock.fillBpmTrack(track, nbBeats);
+                this.$data.player.setInputTrack(track);
+                this.$data.player.setInputTrack(null);
+                this.$data.player.duration = duration;
             }
         },
         computed: {
