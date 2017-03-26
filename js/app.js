@@ -62,7 +62,7 @@
             },
             "midi.channelMap": function (newChan) {
                 if (newChan >= 0) {
-                    inputDispatcher.push(channelMapCallback, 1000);
+                    inputDispatcher.add(channelMapCallback, 1000);
                 } else {
                     inputDispatcher.remove(channelMapCallback);
                 }
@@ -73,7 +73,7 @@
                 this.$data.recorder.toggle();
                 if (this.$data.recorder.isEnabled()) {
                     if (!this.$data.player.isEnabled()) {
-                        inputDispatcher.push(delayedPlayCallback);
+                        inputDispatcher.add(delayedPlayCallback);
                     }
                     this.$data.player.setInputTrack(this.$data.recorder.track);
                 } else {
@@ -90,7 +90,7 @@
             },
             onThruClicked: function (isEnabled) {
                 if (isEnabled) {
-                    inputDispatcher.push(midiThruCallback);
+                    inputDispatcher.add(midiThruCallback);
                 } else {
                     inputDispatcher.remove(midiThruCallback);
                 }

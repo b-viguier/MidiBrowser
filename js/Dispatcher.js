@@ -14,7 +14,7 @@ class Dispatcher {
         );
     }
 
-    push(callback, priority) {
+    add(callback, priority) {
         var entry = {
             callback: callback,
             priority: priority || 0

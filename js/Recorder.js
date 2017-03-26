@@ -17,7 +17,7 @@ class Recorder {
 
     enable() {
         this.track.clear();
-        this.input.push(this.getInputCallback(), -10);
+        this.input.add(this.getInputCallback(), -10);
         this.enabled = true;
         return true;
     }
