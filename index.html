@@ -18,6 +18,19 @@
     <script src="./js/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="./js/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script type="x-template" id="panel">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <a v-on:click="visible=!visible">{{title}}</a>
+                </h3>
+            </div>
+            <div class="panel-body" v-if="visible">
+                <slot></slot>
+            </div>
+        </div>
+    </script>
 </head>
 
 <body>
@@ -43,57 +56,87 @@
         </div>
     </nav>
 
+    <h1 v-if="midi.error" class="text-danger">{{ midi.error }}</h1>
 
-    <div class="container-fluid">
+    <div class="container-fluid" v-if="midi.access">
 
-        <div class="jumbotron">
-            <h1 v-if="midi.error" class="text-danger">{{ midi.error }}</h1>
-            <div v-if="midi.access" class="row form-inline text-center">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="midi_input">Input</label>
-                        <select id="midi_input" v-model="midi.input" class="form-control">
-                            <option value="null">None</option>
-                            <option v-for="port in Array.from(midi.access.inputs.values())" :value="port">
-                                {{ port.name }}
-                            </option>
-                        </select>
+        <div class="row">
+            <div class="col-sm-6">
+                <panel title="Midi settings">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="midi_input" class="col-xs-3 control-label">Input</label>
+                            <div class="col-xs-9">
+                                <select id="midi_input" v-model="midi.input" class="form-control">
+                                    <option value="null">None</option>
+                                    <option v-for="port in Array.from(midi.access.inputs.values())" :value="port">
+                                        {{ port.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="midi_output" class="col-xs-3 control-label">Output</label>
+                            <div class="col-xs-9">
+                                <select v-model="midi.output" class="form-control">
+                                    <option id="midi_output" value="null">None</option>
+                                    <option v-for="port in Array.from(midi.access.outputs.values())" :value="port">
+                                        {{ port.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="midi_thru" class="col-xs-3 control-label">Midi Thru</label>
+                            <div class="col-xs-9">
+                                <input id="midi_thru" type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="midi_map" class="col-xs-3 control-label">Channel mapping</label>
+                            <div class="col-xs-9">
+                                <select id="midi_map" v-model="midi.channelMap" class="form-control">
+                                    <option value="-1">None</option>
+                                    <option v-for="chan in 16" :value="chan-1">{{ chan }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-offset-3 col-xs-9">
+                                <button class="btn btn-default" v-on:click="allNotesOff">All Notes Off</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="midi_output">Output</label>
-                        <select v-model="midi.output" class="form-control">
-                            <option id="midi_output" value="null">None</option>
-                            <option v-for="port in Array.from(midi.access.outputs.values())" :value="port">
-                                {{ port.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="midi_thru">Midi Thru</label>
-                        <input id="midi_thru" type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
-                    </div>
-                    <div class="form-group">
-                        <label for="midi_map">Channel mapping</label>
-                        <select id="midi_map" v-model="midi.channelMap" class="form-control">
-                            <option value="-1">None</option>
-                            <option v-for="chan in 16" :value="chan-1">{{ chan }}</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="bpm">BPM</span>
-                        <input aria-describedby="bpm" v-model.number="clock.bpm" type="number" min="30" max="300" class="form-control">
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" v-on:click="createMetronomeTrack($refs.nbBeats.value)">Create Metronome Track</button>
-                        </span>
-                        <input ref="nbBeats" type="number" min="1" value="4" class="form-control">
-                    </div>
-                    <button class="btn btn-default" v-on:click="allNotesOff">All Notes Off</button>
-                </div>
+                </panel>
             </div>
-            <div class="row">
-                <div class="col-md-12 text-center">
+            <div class="col-sm-6">
+                <panel title="Metronome settings">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="bpm" class="col-xs-3 control-label">BPM</label>
+                            <div class="col-xs-9">
+                                <input id="bpm" v-model.number="clock.bpm" type="number" min="30" max="300" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nb-beats" class="col-xs-3 control-label">Nb Beats</label>
+                            <div class="col-xs-9">
+                                <input id="nb-beats" ref="nbBeats" type="number" min="1" value="4" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-offset-3 col-xs-9">
+                                <button class="btn btn-default" type="button" v-on:click="createMetronomeTrack($refs.nbBeats.value)">Create Track</button>
+                            </div>
+                        </div>
+                    </div>
+                </panel>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <panel title="Transport">
                     <div class="btn-group btn-group-lg" role="group" aria-label="...">
                         <button type="button" class="btn" :class="[player.isEnabled() ? 'btn-success' : 'btn-default']"
                                 v-on:click="onPlayClicked">Play
@@ -102,7 +145,7 @@
                                 v-on:click="onRecordClicked">Record
                         </button>
                     </div>
-                </div>
+                </panel>
             </div>
         </div>
 

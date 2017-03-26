@@ -1,5 +1,15 @@
 (function () {
 
+    Vue.component('panel', {
+        template: '#panel',
+        props: ['title'],
+        data: function () {
+            return {
+                visible: true
+            }
+        }
+    });
+
     var inputDispatcher = new Dispatcher();
     var clock = new Clock();
 
