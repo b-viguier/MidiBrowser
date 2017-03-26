@@ -23,7 +23,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    <a v-on:click="visible=!visible">{{title}}</a>
+                    <a @click="visible=!visible">{{title}}</a>
                 </h3>
             </div>
             <div class="panel-body" v-if="visible">
@@ -89,7 +89,7 @@
                         <div class="form-group">
                             <label for="midi_thru" class="col-xs-3 control-label">Midi Thru</label>
                             <div class="col-xs-9">
-                                <input id="midi_thru" type="checkbox" v-on:click="onThruClicked($event.srcElement.checked)">
+                                <input id="midi_thru" type="checkbox" @click="onThruClicked($event.srcElement.checked)">
                             </div>
                         </div>
                         <div class="form-group">
@@ -103,7 +103,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-xs-offset-3 col-xs-9">
-                                <button class="btn btn-default" v-on:click="allNotesOff">All Notes Off</button>
+                                <button class="btn btn-default" @click="allNotesOff">All Notes Off</button>
                             </div>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-xs-offset-3 col-xs-9">
-                                <button class="btn btn-default" type="button" v-on:click="createMetronomeTrack($refs.nbBeats.value)">Create Track</button>
+                                <button class="btn btn-default" type="button" @click="createMetronomeTrack($refs.nbBeats.value)">Create Track</button>
                             </div>
                         </div>
                     </div>
@@ -139,10 +139,10 @@
                 <panel title="Transport">
                     <div class="btn-group btn-group-lg" role="group" aria-label="...">
                         <button type="button" class="btn" :class="[player.isEnabled() ? 'btn-success' : 'btn-default']"
-                                v-on:click="onPlayClicked">Play
+                                @click="onPlayClicked">Play
                         </button>
                         <button type="button" class="btn" :class="[recorder.isEnabled() ? 'btn-danger' : 'btn-default']"
-                                v-on:click="onRecordClicked">Record
+                                @click="onRecordClicked">Record
                         </button>
                     </div>
                 </panel>
@@ -153,7 +153,7 @@
         <div class="row">
             <div class="alert alert-info text-center col-md-2 col-sm-3 col-xs-4" v-for="(track,index) in player.tracks">
                 {{ track.name }}
-                <button type="button" class="close" aria-label="Close" v-on:click="player.removeTrack(track)">
+                <button type="button" class="close" aria-label="Close" @click="player.removeTrack(track)">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
