@@ -30,22 +30,10 @@ class Recorder {
 
     getInputCallback() {
         return this.callback || (this.callback = (function (event) {
-                if (Recorder.isIgnored(event)) {
-                    return;
-                }
                 this.track.push({
                     data: event.data,
                     timeStamp: this.clock.toLocal(event.timeStamp)
                 });
             }).bind(this));
-    }
-
-    static isIgnored(event) {
-        switch (event.data[0] & 0xf0) {
-            case 0x90:  // Note On
-            case 0x80:  // Note Off
-                return false;
-        }
-        return true;
     }
 }

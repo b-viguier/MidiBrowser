@@ -16,6 +16,24 @@
     var doNothingCallback = function () {
     };
 
+    const PRIORITY_FILTERING = 10000;
+    const PRIORITY_MAPPING = 1000;
+    const PRIORITY_THRU = 100;
+    const PRIORITY_PENDING = 10;
+
+    // Midi Filtering
+    inputDispatcher.add(
+        function (event) {
+            switch (event.data[0] & 0xf0) {
+                case 0x90:  // Note On
+                case 0x80:  // Note Off
+                    return true;
+            }
+            return false;
+        },
+        PRIORITY_FILTERING
+    );
+
     var data = {
         midi: {
             error: null,
@@ -62,7 +80,7 @@
             },
             "midi.channelMap": function (newChan) {
                 if (newChan >= 0) {
-                    inputDispatcher.add(channelMapCallback, 1000);
+                    inputDispatcher.add(channelMapCallback, PRIORITY_MAPPING);
                 } else {
                     inputDispatcher.remove(channelMapCallback);
                 }
@@ -73,7 +91,7 @@
                 this.$data.recorder.toggle();
                 if (this.$data.recorder.isEnabled()) {
                     if (!this.$data.player.isEnabled()) {
-                        inputDispatcher.add(delayedPlayCallback);
+                        inputDispatcher.add(delayedPlayCallback, PRIORITY_PENDING);
                     }
                     this.$data.player.setInputTrack(this.$data.recorder.track);
                 } else {
@@ -90,7 +108,7 @@
             },
             onThruClicked: function (isEnabled) {
                 if (isEnabled) {
-                    inputDispatcher.add(midiThruCallback);
+                    inputDispatcher.add(midiThruCallback, PRIORITY_THRU);
                 } else {
                     inputDispatcher.remove(midiThruCallback);
                 }
@@ -122,21 +140,15 @@
     });
 
     function delayedPlayCallback(event) {
-        if (Recorder.isIgnored(event)) return;
-
         app.$data.player.enable(clock.toLocal(event.timeStamp));
         inputDispatcher.remove(delayedPlayCallback);
     }
 
     function midiThruCallback(event) {
-        if (Recorder.isIgnored(event)) return;
-
         app.$data.midi.output.send(event.data);
     }
 
     function channelMapCallback(event) {
-        if (Recorder.isIgnored(event)) return;
-
         event.data[0] &= 0xf0;
         event.data[0] |= app.$data.midi.channelMap;
     }

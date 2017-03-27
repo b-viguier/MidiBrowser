@@ -9,9 +9,11 @@ class Dispatcher {
     }
 
     call(...args) {
-        this.entries.forEach(
-            e => e.callback(...args)
-        );
+        var mustContinue = undefined;
+        var i = 0;
+        while(i < this.entries.length && mustContinue !== false) {
+            mustContinue = this.entries[i++].callback(...args);
+        }
     }
 
     add(callback, priority) {
