@@ -9,17 +9,22 @@ class Dispatcher {
     }
 
     call(...args) {
-        var mustContinue = undefined;
-        var i = 0;
-        while(i < this.entries.length && mustContinue !== false) {
-            mustContinue = this.entries[i++].callback(...args);
+        var callbackStatus;
+        for (var i = 0; i < this.entries.length; ++i) {
+            callbackStatus = this.entries[i].callback(...args);
+            if (callbackStatus === this.STOP_PROPAGATION) {
+                break;
+            }
+            if (callbackStatus === this.REMOVE_CALLBACK) {
+                this.remove(this.entries[i--]);
+            }
         }
     }
 
     add(callback, priority) {
         var entry = {
             callback: callback,
-            priority: priority || 0
+            priority: priority
         };
         if (-1 === this.entries.indexOf(entry)) {
             this.entries.push(entry);
@@ -43,3 +48,6 @@ class Dispatcher {
         );
     }
 }
+
+Dispatcher.prototype.STOP_PROPAGATION = 1;
+Dispatcher.prototype.REMOVE_CALLBACK = 2;

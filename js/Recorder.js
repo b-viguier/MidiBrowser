@@ -1,10 +1,11 @@
 class Recorder {
 
-    constructor(clock, inputDispatcher) {
+    constructor(clock, inputDispatcher, dispatcherPriority) {
         this.track = new Track();
         this.input = inputDispatcher;
         this.enabled = false;
         this.clock = clock;
+        this.priority = dispatcherPriority;
     }
 
     toggle() {
@@ -17,7 +18,7 @@ class Recorder {
 
     enable() {
         this.track.clear();
-        this.input.add(this.getInputCallback(), -10);
+        this.input.add(this.getInputCallback(), this.priority);
         this.enabled = true;
         return true;
     }

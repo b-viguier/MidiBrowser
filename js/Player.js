@@ -20,8 +20,8 @@ class Player {
     }
 
     enable(now) {
-        this.intervalId = setInterval(this.playCallback.bind(this), this.accuracy);
         this.rewind(now || this.clock.now());
+        this.intervalId = setInterval(this.playCallback.bind(this), this.accuracy);
     }
 
     disable() {
@@ -37,6 +37,7 @@ class Player {
             this.flushInputTrack();
             if (this.duration === Number.MAX_SAFE_INTEGER) {
                 this.duration = this.clock.now();
+                this.rewind(this.duration);
             }
         }
 

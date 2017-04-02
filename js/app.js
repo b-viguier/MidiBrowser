@@ -20,6 +20,7 @@
     const PRIORITY_MAPPING = 1000;
     const PRIORITY_THRU = 100;
     const PRIORITY_PENDING = 10;
+    const PRIORITY_RECORDING = 0;
 
     // Midi Filtering
     inputDispatcher.add(
@@ -27,9 +28,9 @@
             switch (event.data[0] & 0xf0) {
                 case 0x90:  // Note On
                 case 0x80:  // Note Off
-                    return true;
+                    return;
             }
-            return false;
+            return inputDispatcher.STOP_PROPAGATION;
         },
         PRIORITY_FILTERING
     );
@@ -43,7 +44,7 @@
             channelMap: -1
         },
         clock: clock,
-        recorder: new Recorder(clock, inputDispatcher),
+        recorder: new Recorder(clock, inputDispatcher, PRIORITY_RECORDING),
         player: new Player(clock, 10, doNothingCallback)
     };
 
@@ -142,6 +143,7 @@
     function delayedPlayCallback(event) {
         app.$data.player.enable(clock.toLocal(event.timeStamp));
         inputDispatcher.remove(delayedPlayCallback);
+        return inputDispatcher.REMOVE_CALLBACK;
     }
 
     function midiThruCallback(event) {
