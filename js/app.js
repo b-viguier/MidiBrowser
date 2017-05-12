@@ -45,8 +45,16 @@
         },
         clock: clock,
         recorder: new Recorder(clock, inputDispatcher, PRIORITY_RECORDING),
-        player: new Player(clock, 10, doNothingCallback)
+        player: new Player(clock, 10, doNothingCallback),
+        storage: new Storage(window.localStorage)
     };
+
+    data.storage
+        .addComponent(
+            'clock',
+            data.clock.save.bind(data.clock),
+            data.clock.load.bind(data.clock)
+        );
 
     var app = new Vue({
         el: '#app',

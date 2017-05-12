@@ -132,6 +132,39 @@
                     </div>
                 </panel>
             </div>
+            <div class="col-sm-6">
+                <panel title="Songs">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="current_song" class="col-xs-3 control-label">Current</label>
+                            <div class="col-xs-9">
+                                <div class="input-group">
+                                    <input id="current_song" type="text" class="form-control" v-model="storage.current">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" @click="storage.save()" :disabled.props="!storage.isModified()">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-default" @click="storage.remove()">
+                                            Remove
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="song_select" class="col-xs-3 control-label">Select</label>
+                            <div class="col-xs-9">
+                                <select id="song_select" class="form-control" @change="storage.load($event.target.value)" :disabled.props="false && storage.isModified()">
+                                    <option value="null" disabled>None</option>
+                                    <option v-for="title in storage.list" :value="title">
+                                        {{ title }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </panel>
+            </div>
         </div>
 
         <div class="row">
@@ -180,6 +213,7 @@
 <script src="./js/vue/2.2.2/vue.js"></script>
 <script src="./js/WebMIDIAPIShim/WebMIDIAPI.min.js"></script>
 
+<script src="js/Storage.js"></script>
 <script src="js/Dispatcher.js"></script>
 <script src="js/Clock.js"></script>
 <script src="js/Track.js"></script>

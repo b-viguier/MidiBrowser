@@ -7,6 +7,16 @@ class Clock {
         this.offset = 0;
     }
 
+    save() {
+        return {
+            bpm: this.bpm
+        };
+    }
+
+    load(state) {
+        this.bpm = state.bpm;
+    }
+
     toLocal(time) {
         return (time - this.offset) * this.bpm / REF_BPM;
     }
