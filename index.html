@@ -67,10 +67,10 @@
                         <div class="form-group">
                             <label for="midi_input" class="col-xs-3 control-label">Input</label>
                             <div class="col-xs-9">
-                                <select id="midi_input" v-model="midi.input" class="form-control">
-                                    <option value="null">None</option>
-                                    <option v-for="port in Array.from(midi.access.inputs.values())" :value="port">
-                                        {{ port.name }}
+                                <select id="midi_input" v-model.number="midi.inputId" class="form-control">
+                                    <option value="0">None</option>
+                                    <option v-for="id in Array.from(midi.access.inputs.keys())" :value="id">
+                                        {{ midi.access.inputs.get(id).name }}
                                     </option>
                                 </select>
                             </div>
@@ -78,10 +78,10 @@
                         <div class="form-group">
                             <label for="midi_output" class="col-xs-3 control-label">Output</label>
                             <div class="col-xs-9">
-                                <select v-model="midi.output" class="form-control">
-                                    <option id="midi_output" value="null">None</option>
-                                    <option v-for="port in Array.from(midi.access.outputs.values())" :value="port">
-                                        {{ port.name }}
+                                <select id="midi_output" v-model.number="midi.outputId" class="form-control">
+                                    <option value="0">None</option>
+                                    <option v-for="id in Array.from(midi.access.outputs.keys())" :value="id">
+                                        {{ midi.access.outputs.get(id).name }}
                                     </option>
                                 </select>
                             </div>

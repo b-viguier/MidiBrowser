@@ -41,6 +41,8 @@
             access: null,
             input: null,
             output: null,
+            inputId: 0,
+            outputId: 0,
             channelMap: -1
         },
         clock: clock,
@@ -66,13 +68,20 @@
             );
         },
         watch: {
-            "midi.input": function (newInput, oldInput) {
+            "midi.inputId": function (newInputId, oldInputId) {
+                var oldInput = this.$data.midi.access.inputs.get(oldInputId);
                 if (oldInput instanceof MIDIInput) {
                     oldInput.onmidimessage = null;
                 }
-                newInput.onmidimessage = inputDispatcher.getCallback();
+                var newInput = this.$data.midi.access.inputs.get(newInputId);
+                if (newInput instanceof MIDIInput) {
+                    newInput.onmidimessage = inputDispatcher.getCallback();
+                }
+                this.$data.midi.input = newInput;
             },
-            "midi.output": function (newOutput, oldOutput) {
+            "midi.outputId": function (newOutputId, oldOutputId) {
+                var newOutput = this.$data.midi.access.outputs.get(newOutputId);
+                this.$data.midi.output = newOutput;
                 if (newOutput instanceof MIDIOutput) {
                     this.$data.player.output = newOutput.send.bind(newOutput);
                 } else {
@@ -129,14 +138,6 @@
                 this.$data.player.setInputTrack(null);
                 this.$data.player.duration = duration;
             }
-        },
-        computed: {
-            isValidInput: function () {
-                return this.$data.midi.input instanceof MIDIInput;
-            },
-            isValidOutput: function () {
-                return this.$data.midi.output instanceof MIDIOutput;
-            }
         }
     });
 
@@ -147,7 +148,7 @@
     }
 
     function midiThruCallback(event) {
-        app.$data.midi.output.send(event.data);
+        app.$data.player.output(event.data);
     }
 
     function channelMapCallback(event) {
