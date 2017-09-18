@@ -26,8 +26,11 @@
     inputDispatcher.add(
         function (event) {
             switch (event.data[0] & 0xf0) {
-                case 0x90:  // Note On
                 case 0x80:  // Note Off
+                case 0x90:  // Note On
+                case 0xB0:  // Control Changes
+                case 0xD0:  // AfterTouch
+                case 0xE0:  // Pitch Bend
                     return;
             }
             return inputDispatcher.STOP_PROPAGATION;
