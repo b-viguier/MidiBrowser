@@ -140,6 +140,19 @@
                 this.$data.player.setInputTrack(track);
                 this.$data.player.setInputTrack(null);
                 this.$data.player.duration = duration;
+            },
+            onKeyPressed(event) {
+                // Handle digit keys to select midi channel
+                if(48 <= event.keyCode && event.keyCode <= 57) {
+                    // 0 => channel 10, n => channel n
+                    this.$data.midi.channelMap = (event.keyCode - 39) % 10;
+                    return;
+                }
+                switch(event.code) {
+                    case "Backspace":
+                        this.player.popTrack();
+                        break;
+                }
             }
         }
     });

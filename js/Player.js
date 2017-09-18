@@ -85,4 +85,11 @@ class Player {
             this.duration = Number.MAX_SAFE_INTEGER;
         }
     }
+
+    popTrack() {
+        this.tracks.pop();
+        if (this.tracks.length === 0) {
+            this.duration = Number.MAX_SAFE_INTEGER;
+        }
+    }
 }

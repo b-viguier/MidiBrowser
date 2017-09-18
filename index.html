@@ -142,7 +142,9 @@
                                 @click="onPlayClicked">Play
                         </button>
                         <button type="button" class="btn" :class="[recorder.isEnabled() ? 'btn-danger' : 'btn-default']"
-                                @click="onRecordClicked">Record
+                                @click="onRecordClicked"
+                                v-on:keydown="onKeyPressed"
+                        >Record
                         </button>
                     </div>
                 </panel>
