@@ -12,9 +12,10 @@
 
     var inputDispatcher = new Dispatcher();
     var clock = new Clock();
+    var stats = new Stats();
+    setInterval(stats.refresh.bind(stats), 1000);
 
-    var doNothingCallback = function () {
-    };
+    var doNothingCallback = stats.getWatchedOutput(function () {});
 
     const PRIORITY_FILTERING = 10000;
     const PRIORITY_MAPPING = 1000;
@@ -50,7 +51,8 @@
         },
         clock: clock,
         recorder: new Recorder(clock, inputDispatcher, PRIORITY_RECORDING),
-        player: new Player(clock, 10, doNothingCallback)
+        player: new Player(clock, 10, doNothingCallback),
+        stats: stats
     };
 
     var app = new Vue({
@@ -86,7 +88,7 @@
                 var newOutput = this.$data.midi.access.outputs.get(newOutputId);
                 this.$data.midi.output = newOutput;
                 if (newOutput instanceof MIDIOutput) {
-                    this.$data.player.output = newOutput.send.bind(newOutput);
+                    this.$data.player.output = stats.getWatchedOutput(newOutput.send.bind(newOutput));
                 } else {
                     this.$data.player.output = doNothingCallback;
                 }
